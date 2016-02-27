@@ -8,7 +8,7 @@ default: lab2
 all: default
 
 HEADERS = $(wildcard *.h)
-LAB2_OBJECTS = $(OBJECT_DIR)/lab2.o
+LAB2_OBJECTS = $(OBJECT_DIR)/lab2.o $(OBJECT_DIR)/ABPSimulator.o
 LAB2_DEBUG_OBJECTS = $(OBJECT_DIR)/lab2_debug.o
 
 $(OBJECT_DIR)/%.o: %.cpp $(HEADERS)
