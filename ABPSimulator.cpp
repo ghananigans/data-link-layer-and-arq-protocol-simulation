@@ -132,5 +132,9 @@ void ABPSimulator::simulate(const unsigned int successPackets) {
   delete timeoutEvent;
   timeoutEvent = NULL;
 
+  unsigned int totalBitsSent = successPacketsDone * DATA_FRAME_LENGTH;
+  double throughput = totalBitsSent / senderCurrentTime;
+
   printf("Time to complete (ms): %f\n", senderCurrentTime);
+  printf("Throughput (bps): %f\n", throughput);
 }
