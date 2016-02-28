@@ -9,7 +9,7 @@ all: default
 
 HEADERS = $(wildcard *.h)
 LAB2_OBJECTS = $(OBJECT_DIR)/lab2.o $(OBJECT_DIR)/ABPSimulator.o
-LAB2_DEBUG_OBJECTS = $(OBJECT_DIR)/lab2_debug.o
+ABPSIMULATOR_DEBUG_OBJECTS = $(OBJECT_DIR)/ABPSimulator_debug.o $(OBJECT_DIR)/ABPSimulator.o
 
 $(OBJECT_DIR)/%.o: %.cpp $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
@@ -19,10 +19,10 @@ $(OBJECT_DIR)/%.o: %.cpp $(HEADERS)
 lab2: $(LAB2_OBJECTS)
 	$(CC) $(CFLAGS) $(LAB2_OBJECTS) -o $@
 
-lab2_debug: $(LAB2_DEBUG_OBJECTS)
-	$(CC) $(CFLAGS) $(LAB2_DEBUG_OBJECTS) -o $@
+ABPSimulator_debug: $(ABPSIMULATOR_DEBUG_OBJECTS)
+	$(CC) $(CFLAGS) $(ABPSIMULATOR_DEBUG_OBJECTS) -o $@
 
 clean:
 	-rm -f $(OBJECT_DIR)/*.o
 	-rm -f lab2
-	-rm -f lab2_debug
+	-rm -f ABPSimulator_debug

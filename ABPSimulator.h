@@ -21,7 +21,7 @@ public:
   double bitErrorRate;
 
   ABPSimulator(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, double);
-  void simulate(int);
+  void simulate(unsigned int);
 
 private:
   // Sender-side

@@ -79,7 +79,7 @@ ACKEvent* ABPSimulator::send(const double currentTime, const unsigned int sn, co
   return newAckEvent;
 }
 
-void ABPSimulator::simulate(const int successPackets) {
+void ABPSimulator::simulate(const unsigned int successPackets) {
   printf("ABP simulator\n");
   printf("Sender-side paramters\n");
   printf("  %-11s %d\n", "H (bits):", this->headerLength);
