@@ -39,12 +39,8 @@ ACKEvent* ABPSimulator::send(const double currentTime, const unsigned int sn, co
   for (unsigned int i = 0; i < dataFrameLength; ++i) {
     bool bitError = (((double) rand()) / RAND_MAX) < this->bitErrorRate;
 
-    if (bitError) {
-      ++errorBits;
-    }
-
-    // If frame has 5 or more error bits, consider it lost
-    if (errorBits == 5) {
+    if (bitError && (++errorBits == 5)) {
+      // If frame has 5 or more error bits, consider it lost
       return NULL;
     }
   }
@@ -61,12 +57,8 @@ ACKEvent* ABPSimulator::send(const double currentTime, const unsigned int sn, co
   for (unsigned int i = 0; i < ackFrameLength; ++i) {
     bool bitError = (((double) rand()) / RAND_MAX) < this->bitErrorRate;
 
-    if (bitError) {
-      ++errorBits;
-    }
-
-    // If frame has 5 or more error bits, consider it lost
-    if (errorBits == 5) {
+    if (bitError && (++errorBits == 5)) {
+      // If frame has 5 or more error bits, consider it lost
       return NULL;
     }
   }
