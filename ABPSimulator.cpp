@@ -88,7 +88,7 @@ void ABPSimulator::simulate(const unsigned int successPackets) {
   printf("Chanel parameters\n");
   printf("  %-11s %d\n", "C (bps):", this->channelCapacity);
   printf("  %-11s %d\n", "TAL (ms):", this->propagationDelay);
-  printf("  %-11s %f\n", "BER:", this->bitErrorRate);
+  printf("  %-11s %g\n", "BER:", this->bitErrorRate);
   printf("Experiment Duration\n");
   printf("  %-11s %d\n", "Successful Packets:", successPackets);
 

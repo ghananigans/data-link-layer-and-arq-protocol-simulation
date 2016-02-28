@@ -5,6 +5,8 @@
 using namespace std;
 
 int main(int argc, char *argv[]) {
+  printf("ABPSimulator Debug");
+
   unsigned int successPackets = 50;
 	unsigned int H =  54 * 8; // Bits
 	unsigned int l = 1500 * 8; // Bits
@@ -14,7 +16,7 @@ int main(int argc, char *argv[]) {
 	double BER = 0.0;
 
 	int c;
-	while ((c = getopt (argc, argv, "hH:l:D:C:T:B:")) != -1) {
+	while ((c = getopt (argc, argv, "hH:l:D:C:T:B:S:")) != -1) {
 		switch (c) {
 			case 'H':
 				H = (unsigned int) std::stoi(optarg);
@@ -34,6 +36,9 @@ int main(int argc, char *argv[]) {
 			case 'B':
 				BER = std::stod(optarg);
 				break;
+      case 'S':
+  			successPackets = (unsigned int) std::stoi(optarg);
+  			break;
 			case 'h':
 			case '?':
 				printf("ABP Simulator Debug\n\n");
@@ -44,7 +49,7 @@ int main(int argc, char *argv[]) {
 				printf("%8s%-10s %s\n", "", "-C <arg>", "Channel capacity (bps)");
 				printf("%8s%-10s %s\n", "", "-T <arg>", "Propagation delay (ms)");
 				printf("%8s%-10s %s\n", "", "-B <arg>", "Bit error rate");
-				printf("%8s%-10s %s\n", "", "-s", "Show timestamps for every event");
+				printf("%8s%-10s %s\n", "", "-S <arg>", "Successful packets to simulate");
 				printf("%8s%-10s %s\n", "", "-h", "Help");
 				printf("\n");
 				exit(EXIT_SUCCESS);
