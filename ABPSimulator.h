@@ -19,15 +19,15 @@ public:
   int channelCapacity;
   int propagationDelay;
   double bitErrorRate;
+  bool ackNak;
 
-  ABPSimulator(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, double);
+  ABPSimulator(bool, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, double);
   void simulate(unsigned int);
 
 private:
   // Sender-side
   unsigned int sn;
   unsigned int nextExpectedAck;
-
   // Receiver-side
   unsigned int nextExpectedFrame;
 

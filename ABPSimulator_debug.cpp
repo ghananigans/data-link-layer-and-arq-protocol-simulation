@@ -14,9 +14,10 @@ int main(int argc, char *argv[]) {
 	unsigned int C = 5 * 1024 * 1024; // Bits per second (bps)
 	unsigned int TAL = 10; // Milliseconds
 	double BER = 0.0;
+  bool ackNak = false;
 
 	int c;
-	while ((c = getopt (argc, argv, "hH:l:D:C:T:B:S:")) != -1) {
+	while ((c = getopt(argc, argv, "hNH:l:D:C:T:B:S:")) != -1) {
 		switch (c) {
 			case 'H':
 				H = (unsigned int) std::stoi(optarg);
@@ -39,6 +40,9 @@ int main(int argc, char *argv[]) {
       case 'S':
   			successPackets = (unsigned int) std::stoi(optarg);
   			break;
+      case 'N':
+        ackNak = true;
+        break;
 			case 'h':
 			case '?':
 				printf("ABP Simulator Debug\n\n");
@@ -56,7 +60,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-  ABPSimulator abpsimulator(H, l, DELTA, C, TAL, BER);
+  ABPSimulator abpsimulator(ackNak, H, l, DELTA, C, TAL, BER);
   abpsimulator.simulate(successPackets);
 
 	exit(EXIT_SUCCESS);

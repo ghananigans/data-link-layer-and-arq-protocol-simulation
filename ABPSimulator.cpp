@@ -20,13 +20,14 @@ using namespace std;
  * Experiment duration in terms of number of successfully delivered packets to be simulated
  */
 
-ABPSimulator::ABPSimulator(unsigned int headerLength, unsigned int packetLength, unsigned int timeoutTime, unsigned int channelCapacity, unsigned int propagationDelay, double bitErrorRate) {
+ABPSimulator::ABPSimulator(bool ackNak, unsigned int headerLength, unsigned int packetLength, unsigned int timeoutTime, unsigned int channelCapacity, unsigned int propagationDelay, double bitErrorRate) {
   this->headerLength = headerLength;
   this->packetLength = packetLength;
   this->timeoutTime = timeoutTime;
   this->channelCapacity = channelCapacity;
   this->propagationDelay = propagationDelay;
   this->bitErrorRate = bitErrorRate;
+  this->ackNak = ackNak;
 
   srand(time(NULL));
 }
@@ -73,6 +74,7 @@ ACKEvent* ABPSimulator::send(const double currentTime, const unsigned int sn, co
 
 void ABPSimulator::simulate(const unsigned int successPackets) {
   printf("ABP simulator\n");
+  printf("  %-11s %s\n", "ACK_NAK:", this->ackNak ? "true" : "false");
   printf("Sender-side paramters\n");
   printf("  %-11s %d\n", "H (bits):", this->headerLength);
   printf("  %-11s %d\n", "l (bits):", this->packetLength);
@@ -113,7 +115,7 @@ void ABPSimulator::simulate(const unsigned int successPackets) {
     if (!ackEvents->empty() && ackEvents->front()->time < timeoutEvent->time) {
       // ACK arrived before timeout
 
-      if ((ackEvents->front()->rn == this->nextExpectedAck) && !ackEvents->front()->error) {
+      if (!this->ackNak || ((ackEvents->front()->rn == this->nextExpectedAck) && !ackEvents->front()->error)) {
         this->sn ^= 1;
         this->nextExpectedAck ^= 1;
         ++successPacketsDone;

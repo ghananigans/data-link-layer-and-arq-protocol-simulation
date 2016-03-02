@@ -13,8 +13,9 @@ int main(int argc, char *argv[]) {
   const int CHANNEL_CAPACITY = 5 * 1024 * 1024; // Bits per second (bps)
   const int PROPAGATION_DELAY = 10; // Milliseconds
   const double BIT_ERROR_RATE = 0.0000214;
+  const bool ackNak = true;
 
-  ABPSimulator abpsimulator(HEADER_LENGTH, PACKET_LENGTH, TIMEOUT_TIME, CHANNEL_CAPACITY, PROPAGATION_DELAY, BIT_ERROR_RATE);
+  ABPSimulator abpsimulator(ackNak, HEADER_LENGTH, PACKET_LENGTH, TIMEOUT_TIME, CHANNEL_CAPACITY, PROPAGATION_DELAY, BIT_ERROR_RATE);
   abpsimulator.simulate(SUCCESS_PACKETS);
 	exit(EXIT_SUCCESS);
 }
