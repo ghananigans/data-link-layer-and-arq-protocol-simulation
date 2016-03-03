@@ -13,10 +13,11 @@ int main(int argc, char *argv[]) {
 	unsigned int DELTA = 25; // Milliseconds
 	unsigned int C = 5 * 1024 * 1024; // Bits per second (bps)
 	unsigned int TAL = 10; // Milliseconds
+  unsigned int bufferSize = 4;
 	double BER = 0.0;
 
 	int c;
-	while ((c = getopt(argc, argv, "hNH:l:D:C:T:B:S:")) != -1) {
+	while ((c = getopt(argc, argv, "hH:l:D:C:T:B:S:Z:")) != -1) {
 		switch (c) {
 			case 'H':
 				H = (unsigned int) std::stoi(optarg);
@@ -39,6 +40,9 @@ int main(int argc, char *argv[]) {
       case 'S':
   			successPackets = (unsigned int) std::stoi(optarg);
   			break;
+      case 'Z':
+  			bufferSize = (unsigned int) std::stoi(optarg);
+  			break;
 			case 'h':
 			case '?':
 				printf("GBN Simulator Debug\n\n");
@@ -50,13 +54,14 @@ int main(int argc, char *argv[]) {
 				printf("%8s%-10s %s\n", "", "-T <arg>", "Propagation delay (ms)");
 				printf("%8s%-10s %s\n", "", "-B <arg>", "Bit error rate");
 				printf("%8s%-10s %s\n", "", "-S <arg>", "Successful packets to simulate");
+        printf("%8s%-10s %s\n", "", "-Z <arg>", "Buffer Size");
 				printf("%8s%-10s %s\n", "", "-h", "Help");
 				printf("\n");
 				exit(EXIT_SUCCESS);
 		}
 	}
 
-  GBNSimulator gbnsimulator(H, l, DELTA, C, TAL, BER);
+  GBNSimulator gbnsimulator(H, l, DELTA, C, TAL, bufferSize, BER);
   gbnsimulator.simulate(successPackets);
 
 	exit(EXIT_SUCCESS);

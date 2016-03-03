@@ -20,12 +20,13 @@ using namespace std;
  * Experiment duration in terms of number of successfully delivered packets to be simulated
  */
 
-GBNSimulator::GBNSimulator(unsigned int headerLength, unsigned int packetLength, unsigned int timeoutTime, unsigned int channelCapacity, unsigned int propagationDelay, double bitErrorRate) {
+GBNSimulator::GBNSimulator(unsigned int headerLength, unsigned int packetLength, unsigned int timeoutTime, unsigned int channelCapacity, unsigned int propagationDelay, unsigned int bufferSize, double bitErrorRate) {
   this->headerLength = headerLength;
   this->packetLength = packetLength;
   this->timeoutTime = timeoutTime;
   this->channelCapacity = channelCapacity;
   this->propagationDelay = propagationDelay;
+  this->bufferSize = bufferSize;
   this->bitErrorRate = bitErrorRate;
 
   srand(time(NULL));
@@ -77,6 +78,7 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
   printf("  %-11s %d\n", "H (bits):", this->headerLength);
   printf("  %-11s %d\n", "l (bits):", this->packetLength);
   printf("  %-11s %d\n", "DELTA (ms):", this->timeoutTime);
+  printf("  %-11s %d\n", "Buffer Size:", this->bufferSize);
   printf("Chanel parameters\n");
   printf("  %-11s %d\n", "C (bps):", this->channelCapacity);
   printf("  %-11s %d\n", "TAL (ms):", this->propagationDelay);

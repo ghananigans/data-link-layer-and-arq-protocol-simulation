@@ -18,9 +18,10 @@ public:
   unsigned int timeoutTime;
   unsigned int channelCapacity;
   unsigned int propagationDelay;
+  unsigned int bufferSize;
   double bitErrorRate;
 
-  GBNSimulator(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, double);
+  GBNSimulator(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, double);
   void simulate(unsigned int);
 
 private:
