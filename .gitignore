@@ -2,6 +2,7 @@ obj/*
 
 lab2
 ABPSimulator_debug
+GBNSimulator_debug
 
 !.keep
 !.gitignore
