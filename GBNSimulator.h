@@ -13,11 +13,11 @@ struct TimeoutEvent {
 
 class GBNSimulator {
 public:
-  int headerLength;
-  int packetLength;
-  int timeoutTime;
-  int channelCapacity;
-  int propagationDelay;
+  unsigned int headerLength;
+  unsigned int packetLength;
+  unsigned int timeoutTime;
+  unsigned int channelCapacity;
+  unsigned int propagationDelay;
   double bitErrorRate;
 
   GBNSimulator(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, double);
