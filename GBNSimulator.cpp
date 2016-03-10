@@ -49,7 +49,7 @@ ACKEvent* GBNSimulator::send(const double currentTime, const unsigned int sn, co
   // If frame no error bits, it arrived successfully
   // Update Receiver's nextExpectedFrame
   if ((errorBits == 0) && (this->nextExpectedFrame == sn)) {
-    this->nextExpectedFrame = ++this->nextExpectedFrame % this->bufferSize;
+    this->nextExpectedFrame = (++this->nextExpectedFrame % this->bufferSize) + 1;
   }
 
   errorBits = 0;
@@ -67,7 +67,7 @@ ACKEvent* GBNSimulator::send(const double currentTime, const unsigned int sn, co
   ACKEvent* newAckEvent = new ACKEvent();
   newAckEvent->rn = this->nextExpectedFrame;
   newAckEvent->error = errorBits > 0;
-  newAckEvent->time = currentTime + (1000 * ((double) (dataFrameLength + this->headerLength)) / this->channelCapacity) + (2 * this->propagationDelay);
+  newAckEvent->time = currentTime + (1000 * ((double) (dataFrameLength + ackFrameLength)) / this->channelCapacity) + (2 * this->propagationDelay);
 
   return newAckEvent;
 }
@@ -99,7 +99,7 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
 
   unsigned int successPacketsDone = 0;
 
-  TimeoutEvent *timeoutEvent = new TimeoutEvent();
+  TimeoutEvent *timeoutEvent = NULL;
   std::queue<ACKEvent *> *ackEvents = new std::queue<ACKEvent *>;
   std::queue<Packet *> *buffer = new std::queue<Packet *>;
 
@@ -151,7 +151,7 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
       //this->sn ^= 1;
       //this->nextExpectedAck ^= 1;
 
-      while (!buffer->empty() && buffer->front()->sn <= ackEvents->front()->rn) {
+      while (!buffer->empty() && buffer->front()->sn < ackEvents->front()->rn) {
         ++successPacketsDone;
 
         delete buffer->front();

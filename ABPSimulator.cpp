@@ -67,7 +67,7 @@ ACKEvent* ABPSimulator::send(const double currentTime, const unsigned int sn, co
   ACKEvent* newAckEvent = new ACKEvent();
   newAckEvent->rn = this->nextExpectedFrame;
   newAckEvent->error = errorBits > 0;
-  newAckEvent->time = currentTime + (1000 * ((double) (dataFrameLength + this->headerLength)) / this->channelCapacity) + (2 * this->propagationDelay);
+  newAckEvent->time = currentTime + (1000 * ((double) (dataFrameLength + ackFrameLength)) / this->channelCapacity) + (2 * this->propagationDelay);
 
   return newAckEvent;
 }
