@@ -11,6 +11,11 @@ struct TimeoutEvent {
   double time;
 };
 
+struct Packet {
+  unsigned int sn;
+  double timeSent;
+};
+
 class GBNSimulator {
 public:
   unsigned int headerLength;

@@ -30,3 +30,4 @@ clean:
 	-rm -f $(OBJECT_DIR)/*.o
 	-rm -f lab2
 	-rm -f ABPSimulator_debug
+	-rm -f GBNSimulator_debug

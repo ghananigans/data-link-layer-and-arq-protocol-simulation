@@ -65,7 +65,7 @@ ACKEvent* ABPSimulator::send(const double currentTime, const unsigned int sn, co
   }
 
   ACKEvent* newAckEvent = new ACKEvent();
-  newAckEvent->rn = nextExpectedFrame;
+  newAckEvent->rn = this->nextExpectedFrame;
   newAckEvent->error = errorBits > 0;
   newAckEvent->time = currentTime + (1000 * ((double) (dataFrameLength + this->headerLength)) / this->channelCapacity) + (2 * this->propagationDelay);
 
@@ -133,6 +133,9 @@ void ABPSimulator::simulate(const unsigned int successPackets) {
 
   delete timeoutEvent;
   timeoutEvent = NULL;
+
+  delete ackEvents;
+  ackEvents = NULL;
 
   unsigned int totalBitsSent = successPacketsDone * DATA_FRAME_LENGTH;
   double throughput = totalBitsSent / senderCurrentTime;

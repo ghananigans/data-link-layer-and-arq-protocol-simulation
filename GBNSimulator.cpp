@@ -49,7 +49,7 @@ ACKEvent* GBNSimulator::send(const double currentTime, const unsigned int sn, co
   // If frame no error bits, it arrived successfully
   // Update Receiver's nextExpectedFrame
   if ((errorBits == 0) && (this->nextExpectedFrame == sn)) {
-    this->nextExpectedFrame ^= 1;
+    this->nextExpectedFrame = ++this->nextExpectedFrame % this->bufferSize;
   }
 
   errorBits = 0;
@@ -65,7 +65,7 @@ ACKEvent* GBNSimulator::send(const double currentTime, const unsigned int sn, co
   }
 
   ACKEvent* newAckEvent = new ACKEvent();
-  newAckEvent->rn = nextExpectedFrame;
+  newAckEvent->rn = this->nextExpectedFrame;
   newAckEvent->error = errorBits > 0;
   newAckEvent->time = currentTime + (1000 * ((double) (dataFrameLength + this->headerLength)) / this->channelCapacity) + (2 * this->propagationDelay);
 
@@ -93,7 +93,6 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
   this->sn = 0;
   this->nextExpectedAck = 1;
   double senderCurrentTime = 0.0;
-
   // Receiver-side
   this->nextExpectedFrame = 0;
   //double receiverCurrentTime = 0.0;
@@ -102,37 +101,86 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
 
   TimeoutEvent *timeoutEvent = new TimeoutEvent();
   std::queue<ACKEvent *> *ackEvents = new std::queue<ACKEvent *>;
+  std::queue<Packet *> *buffer = new std::queue<Packet *>;
 
   while (successPacketsDone < successPackets) {
-    timeoutEvent->time = senderCurrentTime + DATA_FRAME_TRANSMISSION_DELAY + this->timeoutTime;
+    double senderNextTime = 0.0;
 
-    ACKEvent *newAckEvent = this->send(senderCurrentTime, this->sn, DATA_FRAME_LENGTH);
-    if (newAckEvent) {
-      ackEvents->push(newAckEvent);
-    }
+    if ((this->bufferSize - buffer->size()) > 0) {
+      // buffer can fit more stuff now
+      Packet *newPacket = new Packet();
+      newPacket->sn = this->sn;
+      senderNextTime = senderCurrentTime + DATA_FRAME_TRANSMISSION_DELAY;
+      newPacket->timeSent = senderNextTime;
 
-    // See if timeout occurs first or ackEvent
-    if (!ackEvents->empty() && ackEvents->front()->time < timeoutEvent->time) {
-      // ACK arrived before timeout
+      buffer->push(newPacket);
 
-      if ((ackEvents->front()->rn == this->nextExpectedAck) && !ackEvents->front()->error) {
-        this->sn ^= 1;
-        this->nextExpectedAck ^= 1;
-        ++successPacketsDone;
+      ACKEvent *newAckEvent = this->send(senderCurrentTime, this->sn, DATA_FRAME_LENGTH);
+      if (newAckEvent) {
+        ackEvents->push(newAckEvent);
       }
 
-      senderCurrentTime = ackEvents->front()->time;
+      this->sn = ++this->sn % this->bufferSize;
+
+      if (!timeoutEvent) {
+        timeoutEvent = new TimeoutEvent;
+        timeoutEvent->time = senderCurrentTime + DATA_FRAME_TRANSMISSION_DELAY + this->timeoutTime;
+      }
+    } else {
+      if (ackEvents->empty() || (timeoutEvent->time <= ackEvents->front()->time)) {
+        senderNextTime = timeoutEvent->time;
+      } else {
+        senderNextTime = ackEvents->front()->time;
+      }
+    }
+
+    if (ackEvents->empty() || ((timeoutEvent->time <= senderNextTime) && (timeoutEvent->time <= ackEvents->front()->time))) {
+      // Timeout occured
+      delete timeoutEvent;
+      timeoutEvent = NULL;
+
+      // need to resent everything in buffer so just dump
+      // buffer and recreate/send
+      while (!buffer->empty()) {
+        buffer->pop();
+      }
+    }
+
+    // Pop all ACK Events that occured already
+    while(!ackEvents->empty() && (ackEvents->front()->time <= senderNextTime)) {
+      //this->sn ^= 1;
+      //this->nextExpectedAck ^= 1;
+
+      while (!buffer->empty() && buffer->front()->sn <= ackEvents->front()->rn) {
+        ++successPacketsDone;
+
+        delete buffer->front();
+        buffer->pop();
+
+        if (timeoutEvent) {
+          delete timeoutEvent;
+          timeoutEvent = NULL;
+        }
+      }
 
       delete ackEvents->front();
       ackEvents->pop();
-    } else {
-      // Timeout before ACK
-      senderCurrentTime = timeoutEvent->time;
     }
+
+    senderCurrentTime = senderNextTime;
   }
 
-  delete timeoutEvent;
-  timeoutEvent = NULL;
+  if (timeoutEvent) {
+    delete timeoutEvent;
+    timeoutEvent = NULL;
+  }
+
+  // Delete ackEvents & buffer queues
+  delete ackEvents;
+  delete buffer;
+
+  buffer = NULL;
+  ackEvents = NULL;
 
   unsigned int totalBitsSent = successPacketsDone * DATA_FRAME_LENGTH;
   double throughput = totalBitsSent / senderCurrentTime;
