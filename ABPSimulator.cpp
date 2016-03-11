@@ -115,10 +115,12 @@ void ABPSimulator::simulate(const unsigned int successPackets) {
     if (!ackEvents->empty() && ackEvents->front()->time < timeoutEvent->time) {
       // ACK arrived before timeout
 
-      if (!this->ackNak || ((ackEvents->front()->rn == this->nextExpectedAck) && !ackEvents->front()->error)) {
+      if ((ackEvents->front()->rn == this->nextExpectedAck) && !ackEvents->front()->error) {
         this->sn ^= 1;
         this->nextExpectedAck ^= 1;
         ++successPacketsDone;
+      } else if (this->ackNak) {
+        // ACKNACK EVENT
       }
 
       senderCurrentTime = ackEvents->front()->time;
