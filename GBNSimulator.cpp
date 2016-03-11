@@ -151,7 +151,7 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
       //this->sn ^= 1;
       //this->nextExpectedAck ^= 1;
 
-      while (!buffer->empty() && buffer->front()->sn < ackEvents->front()->rn) {
+      while (!buffer->empty() && !ackEvents->front()->error && (buffer->front()->sn < ackEvents->front()->rn)) {
         ++successPacketsDone;
 
         delete buffer->front();
