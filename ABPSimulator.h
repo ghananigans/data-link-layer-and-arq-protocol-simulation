@@ -15,13 +15,13 @@ class ABPSimulator {
 public:
   unsigned int headerLength;
   unsigned int packetLength;
-  unsigned int timeoutTime;
+  double timeoutTime;
   unsigned int channelCapacity;
-  unsigned int propagationDelay;
+  double propagationDelay;
   double bitErrorRate;
   bool ackNak;
 
-  ABPSimulator(bool, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, double);
+  ABPSimulator(bool, unsigned int, unsigned int, double, unsigned int, double, double);
   void simulate(unsigned int);
 
 private:

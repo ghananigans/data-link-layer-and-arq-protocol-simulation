@@ -20,7 +20,7 @@ using namespace std;
  * Experiment duration in terms of number of successfully delivered packets to be simulated
  */
 
-GBNSimulator::GBNSimulator(unsigned int headerLength, unsigned int packetLength, unsigned int timeoutTime, unsigned int channelCapacity, unsigned int propagationDelay, unsigned int bufferSize, double bitErrorRate) {
+GBNSimulator::GBNSimulator(unsigned int headerLength, unsigned int packetLength, double timeoutTime, unsigned int channelCapacity, double propagationDelay, unsigned int bufferSize, double bitErrorRate) {
   this->headerLength = headerLength;
   this->packetLength = packetLength;
   this->timeoutTime = timeoutTime;
@@ -77,11 +77,11 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
   printf("Sender-side paramters\n");
   printf("  %-11s %d\n", "H (bits):", this->headerLength);
   printf("  %-11s %d\n", "l (bits):", this->packetLength);
-  printf("  %-11s %d\n", "DELTA (ms):", this->timeoutTime);
+  printf("  %-11s %f\n", "DELTA (ms):", this->timeoutTime);
   printf("  %-11s %d\n", "Buffer Size:", this->bufferSize);
   printf("Chanel parameters\n");
   printf("  %-11s %d\n", "C (bps):", this->channelCapacity);
-  printf("  %-11s %d\n", "TAL (ms):", this->propagationDelay);
+  printf("  %-11s %f\n", "TAL (ms):", this->propagationDelay);
   printf("  %-11s %g\n", "BER:", this->bitErrorRate);
   printf("Experiment Duration\n");
   printf("  %-11s %d\n", "Successful Packets:", successPackets);
@@ -182,8 +182,8 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
   buffer = NULL;
   ackEvents = NULL;
 
-  unsigned int totalBitsSent = successPacketsDone * DATA_FRAME_LENGTH;
-  double throughput = totalBitsSent / senderCurrentTime;
+  unsigned int totalBitsSent = successPacketsDone * this->packetLength;
+  double throughput = totalBitsSent / (senderCurrentTime / 1000);
 
   printf("Time to complete (ms): %f\n", senderCurrentTime);
   printf("Throughput (bps): %f\n", throughput);

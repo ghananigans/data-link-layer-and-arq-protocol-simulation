@@ -10,9 +10,9 @@ int main(int argc, char *argv[]) {
   unsigned int successPackets = 50;
 	unsigned int H =  54 * 8; // Bits
 	unsigned int l = 1500 * 8; // Bits
-	unsigned int DELTA = 25; // Milliseconds
+  double DELTA = 25; // Milliseconds
 	unsigned int C = 5 * 1024 * 1024; // Bits per second (bps)
-	unsigned int TAL = 10; // Milliseconds
+	double TAL = 10; // Milliseconds
   unsigned int bufferSize = 4;
 	double BER = 0.0;
 
@@ -26,13 +26,13 @@ int main(int argc, char *argv[]) {
 				l = (unsigned int) std::stoi(optarg);
 				break;
 			case 'D':
-				DELTA = (unsigned int) std::stoi(optarg);
+				DELTA = std::stod(optarg);
 				break;
 			case 'C':
 				C = (unsigned int) std::stoi(optarg);
 				break;
 			case 'T':
-				TAL = (unsigned int) std::stoi(optarg);
+				TAL = std::stod(optarg);
 				break;
 			case 'B':
 				BER = std::stod(optarg);

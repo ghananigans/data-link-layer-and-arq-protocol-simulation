@@ -20,13 +20,13 @@ class GBNSimulator {
 public:
   unsigned int headerLength;
   unsigned int packetLength;
-  unsigned int timeoutTime;
+  double timeoutTime;
   unsigned int channelCapacity;
-  unsigned int propagationDelay;
+  double propagationDelay;
   unsigned int bufferSize;
   double bitErrorRate;
 
-  GBNSimulator(unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, unsigned int, double);
+  GBNSimulator(unsigned int, unsigned int, double, unsigned int, double, unsigned int, double);
   void simulate(unsigned int);
 
 private:
