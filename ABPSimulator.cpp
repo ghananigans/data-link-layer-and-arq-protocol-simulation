@@ -112,24 +112,44 @@ void ABPSimulator::simulate(const unsigned int successPackets) {
     }
 
     // See if timeout occurs first or ackEvent
-    if (!ackEvents->empty() && ackEvents->front()->time < timeoutEvent->time) {
-      // ACK arrived before timeout
-
-      if ((ackEvents->front()->rn == this->nextExpectedAck) && !ackEvents->front()->error) {
-        this->sn ^= 1;
-        this->nextExpectedAck ^= 1;
-        ++successPacketsDone;
-      } else if (this->ackNak) {
-        // ACKNACK EVENT
-      }
-
-      senderCurrentTime = ackEvents->front()->time;
-
-      delete ackEvents->front();
-      ackEvents->pop();
-    } else {
+    if (ackEvents->empty() || ackEvents->front()->time >= timeoutEvent->time) {
       // Timeout before ACK
       senderCurrentTime = timeoutEvent->time;
+    } else {
+      // first ackevent happens before timeout
+      while (!ackEvents->empty()) {
+        if (ackEvents->front()->time >= timeoutEvent->time) {
+          // ackevent after timeout
+          senderCurrentTime = timeoutEvent->time;
+          break;
+        }
+
+        bool sendNextPacket = false;
+
+        if ((ackEvents->front()->rn == this->nextExpectedAck) && !ackEvents->front()->error) {
+          this->sn ^= 1;
+          this->nextExpectedAck ^= 1;
+          ++successPacketsDone;
+
+          sendNextPacket = true;
+        } else if (this->ackNak) {
+          // ACKNACK EVENT
+          sendNextPacket = true;
+        }
+
+        senderCurrentTime = ackEvents->front()->time;
+
+        delete ackEvents->front();
+        ackEvents->pop();
+
+        if (sendNextPacket) {
+          break;
+        }
+
+        if (ackEvents->empty()) {
+          senderCurrentTime = timeoutEvent->time;
+        }
+      }
     }
   }
 
