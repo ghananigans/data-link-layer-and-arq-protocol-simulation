@@ -149,6 +149,20 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
 
     // Pop all ACK Events that occured already
     while(!ackEvents->empty() && (ackEvents->front()->time <= senderNextTime)) {
+      // timeout between acks
+      if (timeoutEvent && timeoutEvent->time <= ackEvents->front()->time) {
+        // Timeout occured
+        delete timeoutEvent;
+        timeoutEvent = NULL;
+
+        // need to resent everything in buffer so just dump
+        // buffer and recreate/send
+        while (!buffer->empty()) {
+          this->sn = (this->sn - 1) % (this->bufferSize + 1);
+          buffer->pop();
+        }
+      }
+
       if (!buffer->empty() && !ackEvents->front()->error && (buffer->front()->sn != ackEvents->front()->rn)) {
         for (int i = (ackEvents->front()->rn - buffer->front()->sn) % (this->bufferSize + 1); i > 0; --i) {
           ++successPacketsDone;
@@ -162,18 +176,6 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
           }
         }
       }
-      /*
-      while (!buffer->empty() && !ackEvents->front()->error && (buffer->front()->sn < ackEvents->front()->rn)) {
-        ++successPacketsDone;
-
-        delete buffer->front();
-        buffer->pop();
-
-        if (timeoutEvent) {
-          delete timeoutEvent;
-          timeoutEvent = NULL;
-        }
-      }*/
 
       delete ackEvents->front();
       ackEvents->pop();
