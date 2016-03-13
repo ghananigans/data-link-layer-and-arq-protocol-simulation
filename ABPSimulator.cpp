@@ -72,7 +72,7 @@ ACKEvent* ABPSimulator::send(const double currentTime, const unsigned int sn, co
   return newAckEvent;
 }
 
-void ABPSimulator::simulate(const unsigned int successPackets) {
+double ABPSimulator::simulate(const unsigned int successPackets) {
   printf("ABP simulator\n");
   printf("  %-11s %s\n", "ACK_NAK:", this->ackNak ? "true" : "false");
   printf("Sender-side paramters\n");
@@ -164,4 +164,6 @@ void ABPSimulator::simulate(const unsigned int successPackets) {
 
   printf("Time to complete (ms): %f\n", senderCurrentTime);
   printf("Throughput (bps): %f\n", throughput);
+
+  return throughput;
 }

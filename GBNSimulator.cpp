@@ -72,7 +72,7 @@ ACKEvent* GBNSimulator::send(const double currentTime, const unsigned int sn, co
   return newAckEvent;
 }
 
-void GBNSimulator::simulate(const unsigned int successPackets) {
+double GBNSimulator::simulate(const unsigned int successPackets) {
   printf("ABP simulator\n");
   printf("Sender-side paramters\n");
   printf("  %-11s %d\n", "H (bits):", this->headerLength);
@@ -201,4 +201,6 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
 
   printf("Time to complete (ms): %f\n", senderCurrentTime);
   printf("Throughput (bps): %f\n", throughput);
+
+  return throughput;
 }

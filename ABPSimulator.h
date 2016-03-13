@@ -22,7 +22,7 @@ public:
   bool ackNak;
 
   ABPSimulator(bool, unsigned int, unsigned int, double, unsigned int, double, double);
-  void simulate(unsigned int);
+  double simulate(unsigned int);
 
 private:
   // Sender-side

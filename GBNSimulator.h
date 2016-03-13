@@ -27,7 +27,7 @@ public:
   double bitErrorRate;
 
   GBNSimulator(unsigned int, unsigned int, double, unsigned int, double, unsigned int, double);
-  void simulate(unsigned int);
+  double simulate(unsigned int);
 
 private:
   // Sender-side
