@@ -49,7 +49,7 @@ ACKEvent* GBNSimulator::send(const double currentTime, const unsigned int sn, co
   // If frame no error bits, it arrived successfully
   // Update Receiver's nextExpectedFrame
   if ((errorBits == 0) && (this->nextExpectedFrame == sn)) {
-    this->nextExpectedFrame = (++this->nextExpectedFrame % this->bufferSize) + 1;
+    this->nextExpectedFrame = (this->nextExpectedFrame + 1) % (this->bufferSize + 1);
   }
 
   errorBits = 0;
@@ -120,11 +120,11 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
         ackEvents->push(newAckEvent);
       }
 
-      this->sn = ++this->sn % this->bufferSize;
+      this->sn = (this->sn + 1) % (this->bufferSize + 1);
 
       if (!timeoutEvent) {
         timeoutEvent = new TimeoutEvent;
-        timeoutEvent->time = senderCurrentTime + DATA_FRAME_TRANSMISSION_DELAY + this->timeoutTime;
+        timeoutEvent->time = senderNextTime + this->timeoutTime;
       }
     } else {
       if (ackEvents->empty() || (timeoutEvent->time <= ackEvents->front()->time)) {
@@ -142,15 +142,27 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
       // need to resent everything in buffer so just dump
       // buffer and recreate/send
       while (!buffer->empty()) {
+        this->sn = (this->sn - 1) % (this->bufferSize + 1);
         buffer->pop();
       }
     }
 
     // Pop all ACK Events that occured already
     while(!ackEvents->empty() && (ackEvents->front()->time <= senderNextTime)) {
-      //this->sn ^= 1;
-      //this->nextExpectedAck ^= 1;
+      if (!buffer->empty() && !ackEvents->front()->error && (buffer->front()->sn != ackEvents->front()->rn)) {
+        for (int i = (ackEvents->front()->rn - buffer->front()->sn) % (this->bufferSize + 1); i > 0; --i) {
+          ++successPacketsDone;
 
+          delete buffer->front();
+          buffer->pop();
+
+          if (timeoutEvent) {
+            delete timeoutEvent;
+            timeoutEvent = NULL;
+          }
+        }
+      }
+      /*
       while (!buffer->empty() && !ackEvents->front()->error && (buffer->front()->sn < ackEvents->front()->rn)) {
         ++successPacketsDone;
 
@@ -161,7 +173,7 @@ void GBNSimulator::simulate(const unsigned int successPackets) {
           delete timeoutEvent;
           timeoutEvent = NULL;
         }
-      }
+      }*/
 
       delete ackEvents->front();
       ackEvents->pop();
