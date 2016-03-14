@@ -1,0 +1,7 @@
+#!/bin/bash
+
+echo "Running ABP Simulator"
+make generateABPCSV
+./generateABPCSV >/dev/null
+make clean
+echo "Done running ABP Simulator"
