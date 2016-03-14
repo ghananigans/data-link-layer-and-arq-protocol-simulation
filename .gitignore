@@ -1,8 +1,13 @@
 obj/*
 
-lab2
 ABPSimulator_debug
 GBNSimulator_debug
+
+generateABPCSV
+
+ABP.csv
+ABP_NAK.csv
+GBN.csv
 
 !.keep
 !.gitignore
