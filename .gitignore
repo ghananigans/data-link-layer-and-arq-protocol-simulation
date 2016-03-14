@@ -5,6 +5,7 @@ GBNSimulator_debug
 
 generateABPCSV
 generateABPNAKCSV
+generateGBNCSV
 
 ABP.csv
 ABP_NAK.csv
